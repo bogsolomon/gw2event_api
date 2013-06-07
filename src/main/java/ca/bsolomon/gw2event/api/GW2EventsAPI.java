@@ -139,7 +139,8 @@ public class GW2EventsAPI {
 	}
 	
 	public static String queryServer(int worldId,String eventId) {
-		HttpClient httpclient = sslConn.createConnection();
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
 		
 		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENTS_JSON+EVENT_ID+eventId+"&"+WORLD_ID+worldId);
 		
@@ -171,7 +172,8 @@ public class GW2EventsAPI {
 	}
 	
 	public static JSONArray queryServer(String eventId) {
-		HttpClient httpclient = sslConn.createConnection();
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
 		
 		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENTS_JSON+EVENT_ID+eventId);
 		
