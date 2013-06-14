@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
@@ -136,7 +137,7 @@ public class GW2EventsAPI {
 		return null;
 	}
 	
-	public String queryServer(int worldId,String eventId) {
+	public JSONObject queryServer(String worldId,String eventId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -157,13 +158,15 @@ public class GW2EventsAPI {
     		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
     		JSONArray result = json.getJSONArray("events");
     		
-    		return result.getJSONObject(0).getString("state");
+    		return result.getJSONObject(0);
 		} catch (ClientProtocolException e) {
-	    	e.printStackTrace();
+			System.out.println("Protocol exception");
 	    } catch (IOException e) {
-	    	e.printStackTrace();
+	    	System.out.println("Can not connect to server");
+	    } catch (JSONException e) {	
+	    	System.out.println("JSON exception");
 	    } catch (Exception e) {
-	    	return "Event error";
+	    	return null;
 	    }
 		
 		return null;
@@ -192,10 +195,12 @@ public class GW2EventsAPI {
     		
     		return result;
 		} catch (ClientProtocolException e) {
-	    	e.printStackTrace();
+	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    }	
+	    	System.out.println("Can not connect to server");
+	    } catch (JSONException e) {	
+	    	System.out.println("JSON exception");
+	    }
 		
 		return null;
 	}
