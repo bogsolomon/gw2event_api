@@ -94,7 +94,7 @@ public class SSLConn {
 		return null;
 	}
 
-	private SSLSocketFactory createSocketFactory() throws CertificateException,
+	/*private SSLSocketFactory createSocketFactory() throws CertificateException,
 			IOException, NoSuchAlgorithmException, KeyStoreException,
 			KeyManagementException {
 		if (ssf == null) {
@@ -126,6 +126,42 @@ public class SSLConn {
 			ssf = new SSLSocketFactory(sslCon);
 		}
 		
+		return ssf;
+	}*/
+	
+	private SSLSocketFactory createSocketFactory() throws CertificateException,
+			IOException, NoSuchAlgorithmException, KeyStoreException,
+			KeyManagementException {
+		if (ssf == null) {
+			//InputStream certStream = new ByteArrayInputStream(StartComRootCertificate); 
+			//CertificateFactory cf = CertificateFactory.getInstance("X.509");
+			//Collection<? extends Certificate> c = cf.generateCertificates(certStream);
+			//certStream.reset();
+			
+			/*Certificate[] certs = new Certificate[c.toArray().length];
+			if (c.size() == 1) {
+			    Certificate cert = cf.generateCertificate(certStream);
+			    certs[0] = cert;
+			}
+			else {
+			    certs = (Certificate[])c.toArray();
+			}*/
+			
+			//TrustManagerFactory tf = TrustManagerFactory.getInstance("X509");
+			/*KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+			ks.load(null);
+			for (int i = 0; i<certs.length;i++) {
+			    ks.setCertificateEntry("StartCom"+i, certs[i]);
+			}
+			tf.init(ks);*/
+			//javax.net.ssl.TrustManager[] tm = tf.getTrustManagers();
+			//SSLContext sslCon = SSLContext.getInstance("SSL");
+			SSLContext sslCon = SSLContext.getDefault();
+			//sslCon.init(null, tm, new SecureRandom());
+			
+			ssf = new SSLSocketFactory(sslCon);
+		}
+	
 		return ssf;
 	}
 }
