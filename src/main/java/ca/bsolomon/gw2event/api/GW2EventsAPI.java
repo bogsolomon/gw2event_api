@@ -24,6 +24,7 @@ public class GW2EventsAPI {
 	private static final String API_VERSION = "v1/";
 	
 	private static final String EVENT_NAMES_JSON = "event_names.json";
+	private static final String MAP_NAMES_JSON = "map_names.json";
 	private static final String WORLD_NAMES_JSON = "world_names.json";
 	private static final String EVENTS_JSON = "events.json?";
 	
@@ -32,6 +33,7 @@ public class GW2EventsAPI {
 	private static final String EVENT_ID = "event_id=";
 	
 	public static Map<String, String> eventIdToName = new HashMap<String, String>();
+	public static Map<String, String> mapIdToName = new HashMap<String, String>();
 	public static Map<Integer, String> worldIdToName = new HashMap<Integer, String>();
 	
 	private HttpClient httpclient;
@@ -69,6 +71,70 @@ public class GW2EventsAPI {
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    }
+	}
+	
+	public static void generateMapIds() {
+		HttpClient httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+MAP_NAMES_JSON);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        String longline = "";
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline+=line;
+    		}
+    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		
+    		for (int i=0;i< result.size();i++) {
+    			JSONObject obj = result.getJSONObject(i);
+    			
+    			String eventId = obj.getString("id");
+    			String name = obj.getString("name");
+    			
+    			mapIdToName.put(eventId, name);
+    		}
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+	}
+	
+	public JSONArray queryEventIds() {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENT_NAMES_JSON);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        String longline = "";
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline+=line;
+    		}
+    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		
+    		return result;
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }
+		
+		return null;
 	}
 	
 	public static void generateNAWorldIds() {
@@ -194,6 +260,42 @@ public class GW2EventsAPI {
     		JSONArray result = json.getJSONArray("events");
     		
     		return result;
+		} catch (ClientProtocolException e) {
+	    	System.out.println("Protocol exception");
+	    } catch (IOException e) {
+	    	System.out.println("Can not connect to server");
+	    } catch (JSONException e) {	
+	    	System.out.println("JSON exception");
+	    }
+		
+		return null;
+	}
+
+	public String getEventMap(String eventId) {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENTS_JSON+EVENT_ID+eventId);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        String longline = "";
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline+=line;
+    		}
+    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
+    		JSONArray result = json.getJSONArray("events");
+    		
+			JSONObject obj = result.getJSONObject(0);
+			
+			String mapId = obj.getString("map_id");
+			return mapIdToName.get(mapId);
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
