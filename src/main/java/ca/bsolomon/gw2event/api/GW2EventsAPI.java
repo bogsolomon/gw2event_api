@@ -31,6 +31,7 @@ public class GW2EventsAPI {
 	private static final String MAP_ID = "map_id=";
 	private static final String WORLD_ID = "world_id=";
 	private static final String EVENT_ID = "event_id=";
+	private static final String BUILD_VERSION = "build.json";
 	
 	public static Map<String, String> eventIdToName = new HashMap<String, String>();
 	public static Map<String, String> mapIdToName = new HashMap<String, String>();
@@ -303,6 +304,36 @@ public class GW2EventsAPI {
 	    } catch (JSONException e) {	
 	    	System.out.println("JSON exception");
 	    }
+		
+		return null;
+	}
+	
+	public String queryBuildVersion() {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+BUILD_VERSION);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        String longline = "";
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline+=line;
+    		}
+    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
+    		
+    		return json.getString("build_id");
+		} catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    }	
 		
 		return null;
 	}
