@@ -71,6 +71,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 	}
 	
@@ -105,6 +107,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 	}
 	
@@ -133,6 +137,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 		
 		return null;
@@ -170,6 +176,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 	}
 
@@ -199,6 +207,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }	
 		
 		return null;
@@ -234,6 +244,8 @@ public class GW2EventsAPI {
 	    	System.out.println("JSON exception");
 	    } catch (Exception e) {
 	    	return null;
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 		
 		return null;
@@ -267,6 +279,8 @@ public class GW2EventsAPI {
 	    	System.out.println("Can not connect to server");
 	    } catch (JSONException e) {	
 	    	System.out.println("JSON exception");
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 		
 		return null;
@@ -300,6 +314,8 @@ public class GW2EventsAPI {
 	    	System.out.println("Can not connect to server");
 	    } catch (JSONException e) {	
 	    	System.out.println("JSON exception");
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 		
 		return null;
@@ -336,6 +352,8 @@ public class GW2EventsAPI {
 	    	System.out.println("Can not connect to server");
 	    } catch (JSONException e) {	
 	    	System.out.println("JSON exception");
+	    } finally {
+	    	httppost.releaseConnection();
 	    }
 		
 		return null;
@@ -366,6 +384,8 @@ public class GW2EventsAPI {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
 	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
 	    }	
 		
 		return null;
