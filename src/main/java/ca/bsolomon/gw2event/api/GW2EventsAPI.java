@@ -271,6 +271,39 @@ public class GW2EventsAPI {
 		
 		return null;
 	}
+	
+	public JSONArray queryServerEventStatus(String worldId) {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENTS_JSON+WORLD_ID+worldId);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        String longline = "";
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline+=line;
+    		}
+    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
+    		JSONArray result = json.getJSONArray("events");
+    		
+    		return result;
+		} catch (ClientProtocolException e) {
+	    	System.out.println("Protocol exception");
+	    } catch (IOException e) {
+	    	System.out.println("Can not connect to server");
+	    } catch (JSONException e) {	
+	    	System.out.println("JSON exception");
+	    }
+		
+		return null;
+	}
 
 	public String getEventMap(String eventId) {
 		if (httpclient == null)
