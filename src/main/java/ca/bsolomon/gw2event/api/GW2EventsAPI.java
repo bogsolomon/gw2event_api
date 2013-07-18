@@ -34,6 +34,7 @@ public class GW2EventsAPI {
 	private static final String BUILD_VERSION = "build.json";
 	
 	public static Map<String, String> eventIdToName = new HashMap<String, String>();
+	public static Map<String, String> eventIdToMap = new HashMap<String, String>();
 	public static Map<String, String> mapIdToName = new HashMap<String, String>();
 	public static Map<Integer, String> worldIdToName = new HashMap<Integer, String>();
 	
@@ -322,6 +323,9 @@ public class GW2EventsAPI {
 	}
 
 	public String getEventMap(String eventId) {
+		if (eventIdToMap.containsKey(eventId))
+			return  mapIdToName.get(eventIdToMap.get(eventId));
+		
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -345,6 +349,9 @@ public class GW2EventsAPI {
 			JSONObject obj = result.getJSONObject(0);
 			
 			String mapId = obj.getString("map_id");
+			
+			eventIdToMap.put(eventId, mapId);
+			
 			return mapIdToName.get(mapId);
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
