@@ -4,18 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ca.bsolomon.gw2event.api.dao.Build;
+import ca.bsolomon.gw2event.api.dao.Event;
+import ca.bsolomon.gw2event.api.dao.Names;
 import ca.bsolomon.gw2event.api.util.SSLConn;
 
 public class GW2EventsAPI {
@@ -41,6 +42,8 @@ public class GW2EventsAPI {
 	private HttpClient httpclient;
 	private static SSLConn sslConn = new SSLConn();
 
+	private static ObjectMapper objectMapper = new ObjectMapper();
+	
 	public static void generateEventIds() {
 		HttpClient httpclient = sslConn.createConnection();
 		
@@ -53,20 +56,18 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		List<Names> result = objectMapper.readValue(longline.toString(), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Names.class));
     		
     		for (int i=0;i< result.size();i++) {
-    			JSONObject obj = result.getJSONObject(i);
+    			Names obj = result.get(i);
     			
-    			String eventId = obj.getString("id");
-    			String name = obj.getString("name");
-    			
-    			eventIdToName.put(eventId, name);
+    			eventIdToName.put(obj.getId(), obj.getName());
     		}
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
@@ -89,20 +90,18 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		List<Names> result = objectMapper.readValue(longline.toString(), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Names.class));
     		
     		for (int i=0;i< result.size();i++) {
-    			JSONObject obj = result.getJSONObject(i);
+    			Names obj = result.get(i);
     			
-    			String eventId = obj.getString("id");
-    			String name = obj.getString("name");
-    			
-    			mapIdToName.put(eventId, name);
+    			mapIdToName.put(obj.getId(), obj.getName());
     		}
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
@@ -113,7 +112,7 @@ public class GW2EventsAPI {
 	    }
 	}
 	
-	public JSONArray queryEventIds() {
+	public List<Names> queryEventIds() {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -126,12 +125,13 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		List<Names> result = objectMapper.readValue(longline.toString(), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Names.class));
     		
     		return result;
 	    } catch (ClientProtocolException e) {
@@ -157,21 +157,21 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONArray result = (JSONArray) JSONSerializer.toJSON( longline );
+    		List<Names> result = objectMapper.readValue(longline.toString(), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Names.class));
     		
     		for (int i=0;i< result.size();i++) {
-    			JSONObject obj = result.getJSONObject(i);
+    			Names obj = result.get(i);
     			
-    			Integer worldId = obj.getInt("id");
-    			String name = obj.getString("name");
+    			Integer worldId = Integer.parseInt(obj.getId());
     			
     			if (worldId < 2000)
-    				worldIdToName.put(worldId, name);
+    				worldIdToName.put(worldId, obj.getName());
     		}
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
@@ -182,7 +182,7 @@ public class GW2EventsAPI {
 	    }
 	}
 
-	public JSONArray queryServer(int worldId, int mapId) {
+	public List<Event> queryServer(int worldId, int mapId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -195,13 +195,13 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
     		return result;
 		} catch (ClientProtocolException e) {
@@ -215,7 +215,7 @@ public class GW2EventsAPI {
 		return null;
 	}
 	
-	public JSONObject queryServer(String worldId,String eventId) {
+	public Event queryServer(String worldId,String eventId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -228,21 +228,19 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
-    		return result.getJSONObject(0);
+    		return result.get(0);
 		} catch (ClientProtocolException e) {
 			System.out.println("Protocol exception");
 	    } catch (IOException e) {
 	    	System.out.println("Can not connect to server");
-	    } catch (JSONException e) {	
-	    	System.out.println("JSON exception");
 	    } catch (Exception e) {
 	    	return null;
 	    } finally {
@@ -252,7 +250,7 @@ public class GW2EventsAPI {
 		return null;
 	}
 	
-	public JSONArray queryServer(String eventId) {
+	public List<Event> queryServer(String eventId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -265,21 +263,19 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
     		return result;
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
 	    	System.out.println("Can not connect to server");
-	    } catch (JSONException e) {	
-	    	System.out.println("JSON exception");
 	    } finally {
 	    	httppost.releaseConnection();
 	    }
@@ -287,7 +283,7 @@ public class GW2EventsAPI {
 		return null;
 	}
 	
-	public JSONArray queryServerEventStatus(String worldId) {
+	public List<Event> queryServerEventStatus(String worldId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -300,21 +296,19 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
     		return result;
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
 	    	System.out.println("Can not connect to server");
-	    } catch (JSONException e) {	
-	    	System.out.println("JSON exception");
 	    } finally {
 	    	httppost.releaseConnection();
 	    }
@@ -322,7 +316,7 @@ public class GW2EventsAPI {
 		return null;
 	}
 	
-	public JSONArray queryMapEventStatus(String mapId) {
+	public List<Event> queryMapEventStatus(String mapId) {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -335,21 +329,19 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
     		return result;
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
 	    	System.out.println("Can not connect to server");
-	    } catch (JSONException e) {	
-	    	System.out.println("JSON exception");
 	    } finally {
 	    	httppost.releaseConnection();
 	    }
@@ -373,27 +365,23 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
-    		JSONArray result = json.getJSONArray("events");
+    		List<Event> result = objectMapper.readValue(longline.substring(10), 
+    				objectMapper.getTypeFactory().constructCollectionType(List.class, Event.class));
     		
-			JSONObject obj = result.getJSONObject(0);
+    		Event obj = result.get(0);
 			
-			String mapId = obj.getString("map_id");
+			eventIdToMap.put(eventId, obj.getMapId());
 			
-			eventIdToMap.put(eventId, mapId);
-			
-			return mapIdToName.get(mapId);
+			return mapIdToName.get(obj.getMapId());
 		} catch (ClientProtocolException e) {
 	    	System.out.println("Protocol exception");
 	    } catch (IOException e) {
 	    	System.out.println("Can not connect to server");
-	    } catch (JSONException e) {	
-	    	System.out.println("JSON exception");
 	    } finally {
 	    	httppost.releaseConnection();
 	    }
@@ -414,14 +402,15 @@ public class GW2EventsAPI {
 	        BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 	        		    
-	        String longline = "";
+	        StringBuffer longline = new StringBuffer();
     		String line = "";
     		while ((line = rd.readLine()) != null) {
-    			longline+=line;
+    			longline.append(line);
     		}
-    		JSONObject json = (JSONObject) JSONSerializer.toJSON( longline );
+    		Build result = objectMapper.readValue(longline.toString(), 
+    				Build.class);
     		
-    		return json.getString("build_id");
+    		return result.getBuildId();
 		} catch (ClientProtocolException e) {
 	    	e.printStackTrace();
 	    } catch (IOException e) {
