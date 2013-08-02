@@ -12,12 +12,21 @@ public class Location {
 	@JsonProperty("radius")
 	private Integer radius;
 	
+	@JsonProperty("height")
+	private Integer height;
+	
 	@JsonProperty("rotation")
 	private Float rotation;
 	
 	@JsonProperty("center")
 	private List<Integer> center;
-
+	
+	@JsonProperty("z_range")
+	private List<Integer> zRange;
+	
+	@JsonProperty("points")
+	private List<List<Integer>> points;
+	
 	public String getType() {
 		return type;
 	}
@@ -48,6 +57,31 @@ public class Location {
 
 	public void setCenter(List<Integer> center) {
 		this.center = center;
+	}
+	
+
+	public List<Integer> getzRange() {
+		return zRange;
+	}
+
+	public void setzRange(List<Integer> zRange) {
+		this.zRange = zRange;
+	}
+
+	public List<List<Integer>> getPoints() {
+		return points;
+	}
+
+	public void setPoints(List<List<Integer>> points) {
+		this.points = points;
+	}
+
+	public Integer getHeight() {
+		return height;
+	}
+
+	public void setHeight(Integer height) {
+		this.height = height;
 	}
 }
 

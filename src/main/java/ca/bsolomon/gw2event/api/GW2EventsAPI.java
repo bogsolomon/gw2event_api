@@ -170,6 +170,8 @@ public class GW2EventsAPI {
     		
     		longline.insert(10, "[");
     		
+    		longline.insert(longline.length()-1, "]");
+    		
     		EventStatusMapper result = objectMapper.readValue(longline.toString(), 
     				EventStatusMapper.class);
     		
