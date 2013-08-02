@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.bsolomon.gw2event.api.dao.Build;
 import ca.bsolomon.gw2event.api.dao.Event;
+import ca.bsolomon.gw2event.api.dao.EventStatus;
+import ca.bsolomon.gw2event.api.dao.EventStatusMapper;
 import ca.bsolomon.gw2event.api.dao.Names;
 import ca.bsolomon.gw2event.api.util.SSLConn;
 
@@ -28,6 +30,7 @@ public class GW2EventsAPI {
 	private static final String MAP_NAMES_JSON = "map_names.json";
 	private static final String WORLD_NAMES_JSON = "world_names.json";
 	private static final String EVENTS_JSON = "events.json?";
+	private static final String EVENT_DETAILS_JSON = "event_details.json";
 	
 	private static final String MAP_ID = "map_id=";
 	private static final String WORLD_ID = "world_id=";
@@ -132,6 +135,40 @@ public class GW2EventsAPI {
     		}
     		List<Names> result = objectMapper.readValue(longline.toString(), 
     				objectMapper.getTypeFactory().constructCollectionType(List.class, Names.class));
+    		
+    		return result;
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
+	    }
+		
+		return null;
+	}
+	
+	//http://stackoverflow.com/questions/16695527/how-to-map-a-json-attribute-name-to-a-java-field-value
+	public EventStatusMapper queryEventStatus() {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+EVENT_DETAILS_JSON);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        StringBuffer longline = new StringBuffer();
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline.append(line);
+    		}
+    		EventStatusMapper result = objectMapper.readValue(longline.toString(), 
+    				EventStatusMapper.class);
     		
     		return result;
 	    } catch (ClientProtocolException e) {
