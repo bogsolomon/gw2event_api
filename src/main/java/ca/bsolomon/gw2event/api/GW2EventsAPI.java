@@ -18,6 +18,7 @@ import ca.bsolomon.gw2event.api.dao.Build;
 import ca.bsolomon.gw2event.api.dao.Event;
 import ca.bsolomon.gw2event.api.dao.EventDetails;
 import ca.bsolomon.gw2event.api.dao.EventDetailsMapper;
+import ca.bsolomon.gw2event.api.dao.MapDetailsMapper;
 import ca.bsolomon.gw2event.api.dao.Names;
 import ca.bsolomon.gw2event.api.util.SSLConn;
 
@@ -31,6 +32,7 @@ public class GW2EventsAPI {
 	private static final String WORLD_NAMES_JSON = "world_names.json";
 	private static final String EVENTS_JSON = "events.json?";
 	private static final String EVENT_DETAILS_JSON = "event_details.json";
+	private static final String MAP_DETAILS_JSON = "maps.json";
 	
 	private static final String MAP_ID = "map_id=";
 	private static final String WORLD_ID = "world_id=";
@@ -174,6 +176,44 @@ public class GW2EventsAPI {
     		
     		EventDetailsMapper result = objectMapper.readValue(longline.toString(), 
     				EventDetailsMapper.class);
+    		
+    		return result;
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    } finally {
+	    	httppost.releaseConnection();
+	    }
+		
+		return null;
+	}
+	
+	public MapDetailsMapper queryMapDetails() {
+		if (httpclient == null)
+			httpclient = sslConn.createConnection();
+		
+		HttpGet httppost = new HttpGet(API_GUILDWARS2_URL+API_VERSION+MAP_DETAILS_JSON);
+		
+		try {
+	        // Add your data
+	        HttpResponse response = httpclient.execute(httppost);
+
+	        BufferedReader rd = new BufferedReader
+	        		  (new InputStreamReader(response.getEntity().getContent()));
+	        		    
+	        StringBuffer longline = new StringBuffer();
+    		String line = "";
+    		while ((line = rd.readLine()) != null) {
+    			longline.append(line);
+    		}
+    		
+    		longline.insert(8, "[");
+    		
+    		longline.insert(longline.length()-1, "]");
+    		
+    		MapDetailsMapper result = objectMapper.readValue(longline.toString(), 
+    				MapDetailsMapper.class);
     		
     		return result;
 	    } catch (ClientProtocolException e) {
