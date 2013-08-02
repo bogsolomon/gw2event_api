@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.bsolomon.gw2event.api.dao.Build;
 import ca.bsolomon.gw2event.api.dao.Event;
-import ca.bsolomon.gw2event.api.dao.EventStatus;
-import ca.bsolomon.gw2event.api.dao.EventStatusMapper;
+import ca.bsolomon.gw2event.api.dao.EventDetails;
+import ca.bsolomon.gw2event.api.dao.EventDetailsMapper;
 import ca.bsolomon.gw2event.api.dao.Names;
 import ca.bsolomon.gw2event.api.util.SSLConn;
 
@@ -149,7 +149,7 @@ public class GW2EventsAPI {
 	}
 	
 	//http://stackoverflow.com/questions/16695527/how-to-map-a-json-attribute-name-to-a-java-field-value
-	public EventStatusMapper queryEventStatus() {
+	public EventDetailsMapper queryEventDetails() {
 		if (httpclient == null)
 			httpclient = sslConn.createConnection();
 		
@@ -172,8 +172,8 @@ public class GW2EventsAPI {
     		
     		longline.insert(longline.length()-1, "]");
     		
-    		EventStatusMapper result = objectMapper.readValue(longline.toString(), 
-    				EventStatusMapper.class);
+    		EventDetailsMapper result = objectMapper.readValue(longline.toString(), 
+    				EventDetailsMapper.class);
     		
     		return result;
 	    } catch (ClientProtocolException e) {

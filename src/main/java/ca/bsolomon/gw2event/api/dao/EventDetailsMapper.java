@@ -5,16 +5,16 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class EventStatusMapper {
+public class EventDetailsMapper {
 
 	@JsonProperty("events")
-	private List<Map<String, EventStatus>> events;
+	private List<Map<String, EventDetails>> events;
 
-	public List<Map<String, EventStatus>> getEvents() {
+	public List<Map<String, EventDetails>> getEvents() {
 		return events;
 	}
 
-	public void setEvents(List<Map<String, EventStatus>> events) {
+	public void setEvents(List<Map<String, EventDetails>> events) {
 		this.events = events;
 	}
 }
