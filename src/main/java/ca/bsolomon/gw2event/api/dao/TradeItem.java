@@ -58,4 +58,8 @@ public class TradeItem {
 	public void setItem_image_hash(String item_image_hash) {
 		this.item_image_hash = item_image_hash;
 	}
+	
+	public String toString() {
+		return name;
+	}
 }

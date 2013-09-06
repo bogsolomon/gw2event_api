@@ -29,4 +29,15 @@ public class TradeListing {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	@Override
+	public boolean equals(Object obj) {
+		TradeListing that = (TradeListing)obj;
+		
+		if (that.unit_price == this.unit_price) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 }
