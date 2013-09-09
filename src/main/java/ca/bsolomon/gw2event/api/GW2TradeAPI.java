@@ -22,6 +22,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.bsolomon.gw2event.api.dao.TradeItem;
@@ -34,7 +35,8 @@ public class GW2TradeAPI {
 	private static final String SELLS = "sells";
 	private static final String GW2_TRADE_LISTINGS = "https://tradingpost-live.ncplatform.net/ws/listings.json?type=";
 	private static final String GW2_TRADE = "https://tradingpost-live.ncplatform.net";
-	private static final String GW2_TRADE_SEARCH = "https://tradingpost-live.ncplatform.net/ws/search.json?typeahead=1&count=0&text=";
+	private static final String GW2_TRADE_SEARCH_TEXT = "https://tradingpost-live.ncplatform.net/ws/search.json?typeahead=1&count=0&text=";
+	private static final String GW2_TRADE_SEARCH_ID = "https://tradingpost-live.ncplatform.net/ws/search.json?ids=";
 	private static final String GW2_ACCOUNT_LOGIN = "https://account.guildwars2.com/login";
 	private static final String GW2_TRADE_LOGIN = "https://account.guildwars2.com/login?redirect_uri=http%3A%2F%2Ftradingpost-live.ncplatform.net%2Fauthenticate%3Fsource%3D%252F&game_code=gw2";
 	private static CookieStore cs = new BasicCookieStore();
@@ -82,7 +84,11 @@ public class GW2TradeAPI {
 	public List<TradeItem> searchItems(String text) {
 		HttpClient client = sslConn.createConnection();
 		
-		HttpGet get = new HttpGet(GW2_TRADE_SEARCH+text);
+		HttpGet get = new HttpGet(GW2_TRADE_SEARCH_TEXT+text);
+		return searchItems(client, get);
+	}
+
+	private List<TradeItem> searchItems(HttpClient client, HttpGet get) {
 		get.addHeader("Referer",GW2_TRADE);
 		
 		try {
@@ -118,14 +124,15 @@ public class GW2TradeAPI {
 		HttpGet get = new HttpGet(GW2_TRADE_LISTINGS+BUYS+"&id="+item.getData_id());
 		get.addHeader("Referer",GW2_TRADE);
 		
+		StringBuffer longline = new StringBuffer();
+		
 		try {
 			HttpResponse response = client.execute(get, localContext);
 			
 			BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 			
-			StringBuffer longline = new StringBuffer();
-    		String line = "";
+			String line = "";
     		while ((line = rd.readLine()) != null) {
     			longline.append(line);
     		}
@@ -138,8 +145,10 @@ public class GW2TradeAPI {
     		return result;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			System.out.println(longline);
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(longline);
 		}
 		
 		return null;
@@ -151,14 +160,15 @@ public class GW2TradeAPI {
 		HttpGet get = new HttpGet(GW2_TRADE_LISTINGS+SELLS+"&id="+item.getData_id());
 		get.addHeader("Referer",GW2_TRADE);
 		
+		StringBuffer longline = new StringBuffer();
+		
 		try {
 			HttpResponse response = client.execute(get, localContext);
 			
 			BufferedReader rd = new BufferedReader
 	        		  (new InputStreamReader(response.getEntity().getContent()));
 			
-			StringBuffer longline = new StringBuffer();
-    		String line = "";
+			String line = "";
     		while ((line = rd.readLine()) != null) {
     			longline.append(line);
     		}
@@ -171,10 +181,19 @@ public class GW2TradeAPI {
     		return result;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			System.out.println(longline);
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.out.println(longline);
 		}
 		
 		return null;
+	}
+
+	public List<TradeItem> searchItems(int parseInt) {
+		HttpClient client = sslConn.createConnection();
+		
+		HttpGet get = new HttpGet(GW2_TRADE_SEARCH_ID+parseInt);
+		return searchItems(client, get);
 	}
 }
