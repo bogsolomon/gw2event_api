@@ -39,5 +39,8 @@ public class TradeListing {
 		
 		return false;
 	}
-	
+	@Override
+	public String toString() {
+		return unit_price+" "+quantity+" "+listings;
+	}
 }
