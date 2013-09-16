@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.bsolomon.gw2.api.GW2APIConstants;
 import ca.bsolomon.gw2event.api.dao.Build;
 import ca.bsolomon.gw2event.api.dao.Event;
 import ca.bsolomon.gw2event.api.dao.EventDetails;
@@ -22,32 +23,12 @@ import ca.bsolomon.gw2event.api.dao.MapDetailsMapper;
 import ca.bsolomon.gw2event.api.dao.Names;
 import ca.bsolomon.gw2event.api.util.SSLConn;
 
-public class GW2EventsAPI {
+public class GW2EventsAPI extends GW2APIConstants {
 
-	private static final String API_GUILDWARS2_URL = "http://api.guildwars2.com/";
-	private static final String API_VERSION = "v1/";
-	
-	private static final String EVENT_NAMES_JSON = "event_names.json";
-	private static final String MAP_NAMES_JSON = "map_names.json";
-	private static final String WORLD_NAMES_JSON = "world_names.json";
-	private static final String EVENTS_JSON = "events.json?";
-	private static final String EVENT_DETAILS_JSON = "event_details.json";
-	private static final String MAP_DETAILS_JSON = "maps.json";
-	
-	private static final String MAP_ID = "map_id=";
-	private static final String WORLD_ID = "world_id=";
-	private static final String EVENT_ID = "event_id=";
-	private static final String BUILD_VERSION = "build.json";
-	
 	public static Map<String, String> eventIdToName = new HashMap<String, String>();
 	public static Map<String, String> eventIdToMap = new HashMap<String, String>();
 	public static Map<String, String> mapIdToName = new HashMap<String, String>();
 	public static Map<Integer, String> worldIdToName = new HashMap<Integer, String>();
-	
-	private HttpClient httpclient;
-	private static SSLConn sslConn = new SSLConn();
-
-	private static ObjectMapper objectMapper = new ObjectMapper();
 	
 	public static void generateEventIds() {
 		HttpClient httpclient = sslConn.createConnection();
